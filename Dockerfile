@@ -113,16 +113,6 @@ RUN cat ComfyUI/requirements.txt > requirements.in && \
     --extra-index-url "${TORCH_INDEX_URL}" \
     -r requirements.lock
 
-# Install Heavy AI Packages directly from GitHub source repos (with MAX_JOBS=2 to prevent GitHub RAM crashes)
-RUN MAX_JOBS=2 python3.12 -m pip install --no-cache-dir --no-build-isolation \
-    git+https://github.com/Dao-AILab/flash-attention.git \
-    git+https://github.com/thu-ml/SageAttention.git \
-    "git+https://github.com/thu-ml/SageAttention.git#subdirectory=sageattention3_blackwell"
-
-# Install JamePeng's fork of llama-cpp-python with CUDA support enabled
-RUN CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=80;86;89;90;100;120" FORCE_CMAKE=1 \
-    python3.12 -m pip install --no-cache-dir git+https://github.com/JamePeng/llama-cpp-python.git
-
 # Pre-populate ComfyUI-Manager cache so first cold start skips the slow registry fetch
 COPY scripts/prebake-manager-cache.py /tmp/prebake-manager-cache.py
 RUN python3.12 /tmp/prebake-manager-cache.py /tmp/build/ComfyUI/user/__manager/cache
