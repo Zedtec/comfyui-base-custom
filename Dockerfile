@@ -128,12 +128,9 @@ FROM ubuntu:24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV PYTHONUNBUFFERED=1
 ENV IMAGEIO_FFMPEG_EXE=/usr/bin/ffmpeg
-ENV FILEBROWSER_CONFIG=/workspace/runpod-slim/.filebrowser.json
 
 # ---- CUDA variant (re-declared for runtime stage) ----
 ARG CUDA_VERSION_DASH="13-0"
-ARG FILEBROWSER_VERSION="v2.30.0"
-ARG FILEBROWSER_SHA256="4e84b80e556e4eb307dece09b9148d5ba9189c4ad3c1ffcd4c311c19b33a0058"
 
 # Update and install runtime dependencies, CUDA, and common tools
 RUN apt-get update && \
@@ -186,12 +183,6 @@ COPY --from=builder /opt/comfyui-baked /opt/comfyui-baked
 # Remove uv to force ComfyUI-Manager to use pip
 RUN pip uninstall -y uv 2>/dev/null || true && \
     rm -f /usr/local/bin/uv /usr/local/bin/uvx
-
-# Install FileBrowser
-RUN curl -fSL "https://github.com/filebrowser/filebrowser/releases/download/${FILEBROWSER_VERSION}/linux-amd64-filebrowser.tar.gz" -o /tmp/fb.tar.gz && \
-    echo "${FILEBROWSER_SHA256}  /tmp/fb.tar.gz" | sha256sum -c - && \
-    tar xzf /tmp/fb.tar.gz -C /usr/local/bin filebrowser && \
-    rm /tmp/fb.tar.gz
 
 # Set CUDA environment variables
 ENV PATH=/usr/local/cuda/bin:${PATH}
