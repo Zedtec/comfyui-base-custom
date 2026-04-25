@@ -114,10 +114,10 @@ RUN cat ComfyUI/requirements.txt > requirements.in && \
     -r requirements.lock
 
 # Install Heavy AI Packages directly from GitHub source repos (with MAX_JOBS=2 to prevent GitHub RAM crashes)
-RUN MAX_JOBS=2 python3.12 -m pip install --no-cache-dir \
+RUN MAX_JOBS=2 python3.12 -m pip install --no-cache-dir --no-build-isolation \
     git+https://github.com/Dao-AILab/flash-attention.git \
     git+https://github.com/mobcat40/sageattention-blackwell.git \
-    sageattn3==1.0.0
+    "git+https://github.com/thu-ml/SageAttention.git#subdirectory=sageattention3_blackwell"
 
 # Install JamePeng's fork of llama-cpp-python with CUDA support enabled
 RUN CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=80;86;89;90;100;120" FORCE_CMAKE=1 \
