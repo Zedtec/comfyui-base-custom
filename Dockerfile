@@ -50,6 +50,9 @@ RUN curl -sS https://bootstrap.pypa.io/get-pip.py -o get-pip.py && \
 ENV PATH=/usr/local/cuda/bin:${PATH}
 ENV LD_LIBRARY_PATH=/usr/local/cuda/lib64
 ENV CUDA_HOME=/usr/local/cuda
+# Tell the compiler to build "Fat Binaries" for Ampere, Ada, Hopper, and Blackwell!
+ENV TORCH_CUDA_ARCH_LIST="8.0;8.6;8.9;9.0;10.0;12.0"
+ENV CMAKE_CUDA_ARCHITECTURES="80;86;89;90;100;120"
 
 # Download pinned source archives
 WORKDIR /tmp/build
@@ -113,8 +116,8 @@ RUN cat ComfyUI/requirements.txt > requirements.in && \
     --extra-index-url "${TORCH_INDEX_URL}" \
     -r requirements.lock
 
-    # Install JamePeng's fork of llama-cpp-python with CUDA support enabled
-RUN CMAKE_ARGS="-DGGML_CUDA=on" FORCE_CMAKE=1 \
+# Install JamePeng's fork of llama-cpp-python with CUDA support enabled
+RUN CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=80;86;89;90;100;120" FORCE_CMAKE=1 \
     python3.12 -m pip install --no-cache-dir git+https://github.com/JamePeng/llama-cpp-python.git
 
 # Pre-populate ComfyUI-Manager cache so first cold start skips the slow registry fetch
