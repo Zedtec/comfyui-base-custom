@@ -90,7 +90,7 @@ RUN cd /tmp/build/ComfyUI && \
 WORKDIR /tmp/build
 RUN cat ComfyUI/requirements.txt > requirements.in && \
     for node_dir in ComfyUI/custom_nodes/*/; do \
-        if[ -f "$node_dir/requirements.txt" ]; then \
+        if [ -f "$node_dir/requirements.txt" ]; then \
             cat "$node_dir/requirements.txt" >> requirements.in; \
         fi; \
     done && \
