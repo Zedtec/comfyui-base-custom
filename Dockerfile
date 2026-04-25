@@ -99,9 +99,6 @@ RUN cat ComfyUI/requirements.txt > requirements.in && \
     echo "jupyter" >> requirements.in && \
     echo "jupyter-resource-usage" >> requirements.in && \
     echo "jupyterlab-nvdashboard" >> requirements.in && \
-    echo "flash-attn==2.8.4" >> requirements.in && \
-    echo "sageattention==2.2.0" >> requirements.in && \
-    echo "sageattn3==1.0.0" >> requirements.in && \
     echo "torch==${TORCH_VERSION}" >> constraints.txt && \
     echo "torchvision==${TORCHVISION_VERSION}" >> constraints.txt && \
     echo "torchaudio==${TORCHAUDIO_VERSION}" >> constraints.txt && \
@@ -115,6 +112,9 @@ RUN cat ComfyUI/requirements.txt > requirements.in && \
     --index-url https://pypi.org/simple \
     --extra-index-url "${TORCH_INDEX_URL}" \
     -r requirements.lock
+
+# Install Heavy AI Packages separately so they do not break pip-compile
+RUN python3.12 -m pip install --no-cache-dir flash-attn==2.8.4 sageattention==2.2.0 sageattn3==1.0.0
 
 # Install JamePeng's fork of llama-cpp-python with CUDA support enabled
 RUN CMAKE_ARGS="-DGGML_CUDA=on -DCMAKE_CUDA_ARCHITECTURES=80;86;89;90;100;120" FORCE_CMAKE=1 \
